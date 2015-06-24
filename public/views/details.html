@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html ng-app="PrimaryModule">
+
+<head>
+	<link href="../css/bootstrap.css" rel="stylesheet">
+	<link href="../css/angular-chart.css" rel="stylesheet">
+	<link href="../css/style.css" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js" type="application/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" type="application/javascript"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js" charset="utf-8"></script>
+	<!--	<script type="application/javascript" src="/js/typeahead.bundle.js"></script>-->
+	<script type="application/javascript" src="../controllers/details.js"></script>
+	<style>
+		.logo {
+			width: 35px;
+			color: #fff;
+			height: 35px;
+		}
+		
+		.brand-text {
+			margin-top: 2px;
+			line-height: 0.5em;
+		}
+		
+		a .brand-text:hover {
+			color: #fff;
+		}
+		
+		.navbar-brand .row:hover {
+			color: #fff;
+		}
+	</style>
+	<script>
+		function printContent(el) {
+			var restorepage = document.body.innerHTML;
+			var printcontent = document.getElementById(el).innerHTML;
+			document.body.innerHTML = printcontent;
+			window.print();
+			document.body.innerHTML = restorepage;
+		}
+	</script>
+</head>
+
+<body ng-controller="DetailsController">
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header page-scroll">
+				<!--
+
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+-->
+
+				<a class="navbar-brand" href="/">
+					<div class="row" style="margin-top:-5px;">
+						<div class="col-xs-2">
+							<img src="/img/logo.png" class="logo">
+						</div>
+						<div class="col-xs-10 brand-text">
+							<p style="font-size:0.7em">&nbsp;&nbsp;&nbsp;MEDICAL RESEARCHER</p>
+							<p style="font-size:0.6em">&nbsp;&nbsp;&nbsp;Protecting and Promoting Your Health</p>
+						</div>
+					</div>
+				</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<!--
+
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav navbar-right" style="margin-top:10px">
+					<li class="page-scroll">
+						<form action="/details" method="get">
+							<input type="hidden" name="drugname" ng-value="selectedDrug" />
+							<div id="taDrugs" class="row" style="color:#000;margin-top:20px">
+								<div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-md-6 col-xs-12">
+									<div class="right-inner-addon">
+										<i class="fa fa-search"></i>
+										<input type="text" ng-model="selectedDrug" placeholder="Drug Name" typeahead="drug for drug in getDrugs($viewValue)" typeahead-loading="loadingDrugs" class="form-control typeahead input-sm" typeahead-editable="false" typeahead-on-select='onSelect($item, $model, $label)'>
+									</div>
+								</div>
+							</div>
+						</form>
+					</li>
+
+				</ul>
+			</div>
+-->
+
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
+
+	<div class="content">
+
+		<div class="row">
+
+			<div class="col-xs-12 col-md-12 col-lg-12">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<i class="fa  fa-angle-right" ng-hide="showStatistics"></i>
+						<i class="fa  fa-angle-down" ng-show="showStatistics"></i>&nbsp;&nbsp;<a ng-click="toggleStatistics()" style="color:white;cursor:pointer">Enforcements &amp; Events History since 2012 for {{drugname}}</a>
+					</div>
+					<div class="panel-body" ng-show="showStatistics">
+						<div class="row">
+							<div class="col-xs-12 col-md-3 col-lg-3">
+								<h4>Enforcements</h4>
+								<hr>
+								<canvas id="enforcementChart" style="padding:10px;min-height:200px;max-height:200px"></canvas>
+								<div id="enforcementChart-legend" class="chart-legend"></div>
+							</div>
+
+							<div class="col-xs-12 col-md-3 col-lg-3">
+								<h4>Enforcement Classification</h4>
+								<hr>
+								<canvas id="classificationChart" style="padding:10px;"></canvas>
+								<div id="classificationChart-legend" class="chart-legend"></div>
+							</div>
+							<div class="col-xs-12 col-md-3 col-lg-3">
+								<h4>Enforcement Status</h4>
+								<hr>
+								<canvas id="statusChart" style="padding:10px;"></canvas>
+								<div id="statusChart-legend" class="chart-legend"></div>
+							</div>
+							<div class="col-xs-12 col-md-3 col-lg-3">
+								<h4>Adverse Events</h4>
+								<hr>
+								<div class="col-xs-12 col-md-12 col-lg-12">
+									<canvas id="eventChart" style="padding:10px;min-height:275px;max-height:275px"></canvas>
+									<div id="eventChart-legend" class="chart-legend"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+		<div class="row" id="labelContent">
+			<div class="col-sm-12">
+				<h2>{{drugname}}</h3>
+				<hr>
+
+				<!--						<span class="pull-right" style="margin-top:-5px"><button class="btn btn-success btn-sm" style="line-height:1" onclick="printContent('labelContent');"><i class="fa fa-print"></i> Print</button></span>-->
+				<div ng-if="!drugDetail.description" class="row">
+					<div class="col-md-offset-4">
+						No Label information found.
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.description">
+					<div class="col-xs-12">
+						<div ng-repeat="item in drugDetail.description" >
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.information_for_patients">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Information for Patients</div>
+						<div ng-repeat="item in drugDetail.information_for_patients">
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.indications_and_usage">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Indications and Usage</div>
+						<div ng-repeat="item in drugDetail.indications_and_usage">
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.dosage_and_administration">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Dosage and Administration</div>
+						<div ng-repeat="item in drugDetail.dosage_and_administration">
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.adverse_reactions">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Adverse Reactions</div>
+						<div ng-repeat="item in drugDetail.adverse_reactions">
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.drug_interactions">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Drug Interactions</div>
+						<div ng-repeat="item in drugDetail.drug_interactions">
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.nursing_mothers">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Nursing Mothers</div>
+						<div ng-repeat="item in drugDetail.nursing_mothers">
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.pediatric_use">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Pediatric Use</div>
+						<div ng-repeat="item in drugDetail.pediatric_use">
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.clinical_studies">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Clinical Studies</div>
+						<div ng-repeat="item in drugDetail.clinical_studies">
+							{{item}}
+						</div>
+						<hr>
+					</div>
+				</div>
+				<div class="row" ng-if="drugDetail.clinical_pharmacology">
+					<div class="col-xs-12">
+						<div class="labelSubheader">Clinical Pharmacology</div>
+						<div ng-repeat="item in drugDetail.clinical_pharmacology">
+							{{item}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<footer class="text-center">
+		<div class="footer-above">
+			<div class="container">
+				<div class="row">
+					<div class="footer-col col-md-4">
+						<h3>Location</h3>
+						<p>1760 Old Meadow Road
+							<br/>McLean, Virginia 22102</p>
+					</div>
+					<div class="footer-col col-md-4">
+						<h3>Around the Web</h3>
+						<ul class="list-inline">
+							<li>
+								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-facebook"></i></a>
+							</li>
+							<li>
+								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-google-plus"></i></a>
+							</li>
+							<li>
+								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>
+							</li>
+							<li>
+								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-linkedin"></i></a>
+							</li>
+							<li>
+								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-dribbble"></i></a>
+							</li>
+						</ul>
+					</div>
+					<div class="footer-col col-md-4">
+						<h3>About PPC</h3>
+						<p> <a href="http://www.ppc.com" target="_blank">PPC</a>&nbsp;&nbsp;is a leading Information Technology and Management Consulting firm, delivering solutions to Federal, State and Local Government and commercial industry</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="footer-below">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12">
+						Copyright © PPC - Project Performance Company 2015
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+
+</body>
+
+</html>
