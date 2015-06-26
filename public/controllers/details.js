@@ -10,30 +10,39 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 	$scope.classificationChartElement = {};
 	$scope.enforcementChartElement = {};
 
-	$scope.showStatistics = false;
-	$scope.chartLoaded = false;
-	$scope.toggleStatistics = function () {
-		$scope.showStatistics = !$scope.showStatistics;
-
-
-		if ($scope.showStatistics && !$scope.chartLoaded) {
+	$scope.showEnforcementStatistics = false;
+	$scope.enforcementChartLoaded = false;
+	$scope.toggleEnforcementStatistics = function () {
+		$scope.showEnforcementStatistics = !$scope.showEnforcementStatistics;
+		if ($scope.showEnforcementStatistics && !$scope.enforcementChartLoaded) {
 			$http.get('/drug/enforcementCount?drugname=' + $scope.drugname).success(function (data) {
 				$scope.pastEnforcementSuccess(data);
 			});
 
-			$http.get('/drug/eventCount?drugname=' + $scope.drugname).success(function (data) {
-				$scope.pastEventSuccess(data);
-			});
+			
 
 			$http.get('/drug/enforcementClassificationCount?drugname=' + $scope.drugname).success(function (data) {
 				$scope.pastEnforcementClassificationSuccess(data);
 			});
-
+			
 			$http.get('/drug/enforcementStatusCount?drugname=' + $scope.drugname).success(function (data) {
 				$scope.pastEnforcementStatusSuccess(data);
 			});
 		}
-		$scope.chartLoaded = true;
+		$scope.enforcementChartLoaded = true;
+	}
+	
+	$scope.showEventStatistics = false;
+	$scope.eventChartLoaded = false;
+	$scope.toggleEventStatistics = function () {
+		$scope.showEventStatistics = !$scope.showEventStatistics;
+
+		if ($scope.showEventStatistics && !$scope.eventChartLoaded) {
+			$http.get('/drug/eventCount?drugname=' + $scope.drugname).success(function (data) {
+				$scope.pastEventSuccess(data);
+			});
+		}
+		$scope.eventChartLoaded = true;
 	}
 
 	$http.get('/drug/label?drugname=' + $scope.drugname).success(function (data) {

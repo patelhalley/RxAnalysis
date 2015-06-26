@@ -19,26 +19,6 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js" charset="utf-8"></script>
 	<!--	<script type="application/javascript" src="/js/typeahead.bundle.js"></script>-->
 	<script type="application/javascript" src="../controllers/details.js"></script>
-	<style>
-		.logo {
-			width: 35px;
-			color: #fff;
-			height: 35px;
-		}
-		
-		.brand-text {
-			margin-top: 2px;
-			line-height: 0.5em;
-		}
-		
-		a .brand-text:hover {
-			color: #fff;
-		}
-		
-		.navbar-brand .row:hover {
-			color: #fff;
-		}
-	</style>
 	<script>
 		function printContent(el) {
 			var restorepage = document.body.innerHTML;
@@ -51,111 +31,77 @@
 </head>
 
 <body ng-controller="DetailsController">
+
 	<nav class="navbar navbar-default navbar-fixed-top">
-		<div class="container-fluid">
+		<div class="container">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header page-scroll">
-				<!--
-
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
--->
-
 				<a class="navbar-brand" href="/">
-					<div class="row" style="margin-top:-5px;">
-						<div class="col-xs-2">
-							<img src="/img/logo.png" class="logo">
-						</div>
-						<div class="col-xs-10 brand-text">
-							<p style="font-size:0.7em">&nbsp;&nbsp;&nbsp;MEDICAL RESEARCHER</p>
-							<p style="font-size:0.6em">&nbsp;&nbsp;&nbsp;Protecting and Promoting Your Health</p>
-						</div>
-					</div>
+					<img src="/img/logo.png" class="logo">
 				</a>
 			</div>
 
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<!--
-
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<ul class="nav navbar-nav navbar-right" style="margin-top:10px">
-					<li class="page-scroll">
-						<form action="/details" method="get">
-							<input type="hidden" name="drugname" ng-value="selectedDrug" />
-							<div id="taDrugs" class="row" style="color:#000;margin-top:20px">
-								<div class="col-lg-offset-3 col-lg-6 col-md-offset-3 col-md-6 col-xs-12">
-									<div class="right-inner-addon">
-										<i class="fa fa-search"></i>
-										<input type="text" ng-model="selectedDrug" placeholder="Drug Name" typeahead="drug for drug in getDrugs($viewValue)" typeahead-loading="loadingDrugs" class="form-control typeahead input-sm" typeahead-editable="false" typeahead-on-select='onSelect($item, $model, $label)'>
-									</div>
-								</div>
-							</div>
-						</form>
-					</li>
-
-				</ul>
-			</div>
--->
-
-			<!-- /.navbar-collapse -->
 		</div>
 		<!-- /.container-fluid -->
 	</nav>
 
-	<div class="content">
+	<div class="container">
+		<div class="content ">
+			<div class="enforcement">
+				<div class="row" ng-click="toggleEnforcementStatistics()">
+					<i class="fa fa-warning"></i>&nbsp;&nbsp;{{drugname}} may have <b>Enforcement/Recall Events</b> that occurred in past.
+					<i class="fa fa-plus-circle pull-right"  ng-hide="showEnforcementStatistics"></i>
+					<i class="fa fa-minus-circle pull-right"  ng-show="showEnforcementStatistics"></i>
+				</div>
+			</div>
+			<div class="row" ng-show="showEnforcementStatistics" style="background-color:#FFF;color:#666">
+				<div class="col-xs-12 col-md-4 col-lg-4">
+					<h4>Enforcements</h4>
+					<hr>
+					<canvas id="enforcementChart" style="padding:10px;min-height:200px;max-height:200px"></canvas>
+					<div id="enforcementChart-legend" class="chart-legend"></div>
+				</div>
 
-		<div class="row">
+				<div class="col-xs-12 col-md-4 col-lg-4">
+					<h4>Enforcement Classification</h4>
+					<hr>
+					<canvas id="classificationChart" style="padding:10px;"></canvas>
+					<div id="classificationChart-legend" class="chart-legend"></div>
+				</div>
+				<div class="col-xs-12 col-md-4 col-lg-4">
+					<h4>Enforcement Status</h4>
+					<hr>
+					<canvas id="statusChart" style="padding:10px;"></canvas>
+					<div id="statusChart-legend" class="chart-legend"></div>
+				</div>
 
-			<div class="col-xs-12 col-md-12 col-lg-12">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<i class="fa  fa-angle-right" ng-hide="showStatistics"></i>
-						<i class="fa  fa-angle-down" ng-show="showStatistics"></i>&nbsp;&nbsp;<a ng-click="toggleStatistics()" style="color:white;cursor:pointer">Enforcements &amp; Events History since 2012 for {{drugname}}</a>
-					</div>
-					<div class="panel-body" ng-show="showStatistics">
-						<div class="row">
-							<div class="col-xs-12 col-md-3 col-lg-3">
-								<h4>Enforcements</h4>
-								<hr>
-								<canvas id="enforcementChart" style="padding:10px;min-height:200px;max-height:200px"></canvas>
-								<div id="enforcementChart-legend" class="chart-legend"></div>
-							</div>
+			</div>
+			<div class="event">
+				<div class="row" ng-click="toggleEventStatistics()">
+					<i class="fa fa-warning"></i>&nbsp;&nbsp;{{drugname}} may have <b>Adverse Events</b> that occurred in past.
+					<i class="fa fa-plus-circle pull-right"  ng-hide="showEventStatistics"></i>
+					<i class="fa fa-minus-circle pull-right" ng-show="showEventStatistics"></i>
+				</div>
 
-							<div class="col-xs-12 col-md-3 col-lg-3">
-								<h4>Enforcement Classification</h4>
-								<hr>
-								<canvas id="classificationChart" style="padding:10px;"></canvas>
-								<div id="classificationChart-legend" class="chart-legend"></div>
-							</div>
-							<div class="col-xs-12 col-md-3 col-lg-3">
-								<h4>Enforcement Status</h4>
-								<hr>
-								<canvas id="statusChart" style="padding:10px;"></canvas>
-								<div id="statusChart-legend" class="chart-legend"></div>
-							</div>
-							<div class="col-xs-12 col-md-3 col-lg-3">
-								<h4>Adverse Events</h4>
-								<hr>
-								<div class="col-xs-12 col-md-12 col-lg-12">
-									<canvas id="eventChart" style="padding:10px;min-height:275px;max-height:275px"></canvas>
-									<div id="eventChart-legend" class="chart-legend"></div>
-								</div>
-							</div>
-						</div>
+			</div>
+			<div class="row" ng-show="showEventStatistics" style="background-color:#FFF;color:#666">
+
+				<div class="col-xs-12 col-md-4 col-lg-4">
+					<h4>Adverse Events</h4>
+					<hr>
+					<div class="col-xs-12 col-md-12 col-lg-12">
+						<canvas id="eventChart" style="padding:10px;min-height:275px;max-height:275px"></canvas>
+						<div id="eventChart-legend" class="chart-legend"></div>
 					</div>
 				</div>
 			</div>
 
-		</div>
 
 
-		<div class="row" id="labelContent">
-			<div class="col-sm-12">
-				<h2>{{drugname}}</h3>
+
+			<div class="row labelSection">
+				<div class="col-sm-12">
+					<h2>{{drugname}}</h3>
 				<hr>
 
 				<!--						<span class="pull-right" style="margin-top:-5px"><button class="btn btn-success btn-sm" style="line-height:1" onclick="printContent('labelContent');"><i class="fa fa-print"></i> Print</button></span>-->
@@ -254,44 +200,26 @@
 				</div>
 			</div>
 		</div>
+	
+
+
+
 	</div>
-
-
-
-
-
+	</div>
 	<footer class="text-center">
 		<div class="footer-above">
-			<div class="container">
+			<div class="container-fluid">
 				<div class="row">
-					<div class="footer-col col-md-4">
+					<div class="footer-col col-md-6 left-footer ">
 						<h3>Location</h3>
 						<p>1760 Old Meadow Road
 							<br/>McLean, Virginia 22102</p>
 					</div>
-					<div class="footer-col col-md-4">
-						<h3>Around the Web</h3>
-						<ul class="list-inline">
-							<li>
-								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-facebook"></i></a>
-							</li>
-							<li>
-								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-google-plus"></i></a>
-							</li>
-							<li>
-								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>
-							</li>
-							<li>
-								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-linkedin"></i></a>
-							</li>
-							<li>
-								<a href="#" class="btn-social btn-outline"><i class="fa fa-fw fa-dribbble"></i></a>
-							</li>
-						</ul>
-					</div>
-					<div class="footer-col col-md-4">
+
+					<div class="footer-col col-md-6">
 						<h3>About PPC</h3>
-						<p> <a href="http://www.ppc.com" target="_blank">PPC</a>&nbsp;&nbsp;is a leading Information Technology and Management Consulting firm, delivering solutions to Federal, State and Local Government and commercial industry</p>
+						<p> <a href="http://www.ppc.com" target="_blank">PPC</a>&nbsp;&nbsp;is a leading Information Technology and Management Consulting firm,
+							<br>delivering solutions to Federal, State and Local Government and commercial industry.</p>
 					</div>
 				</div>
 			</div>
