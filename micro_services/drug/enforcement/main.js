@@ -50,7 +50,6 @@ module.exports = function (app) {
             common.send_http_request(common.hosts.fda, '/drug/enforcement.json?count=status&limit=1000&' + searchQueryString, common.http_methods.get, get_category_count_success, response);
         }
     });
-
 }
 
 /* Helper Functions */

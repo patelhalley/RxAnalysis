@@ -23,7 +23,7 @@ function get_medicine_list(page) {
     } else {
         fs.exists('/cached_data/drug_names.js', function (exists) {
             if (exists) {
-                application_cache.set(cacheKey, JSON.parse(fs.readFileSync('/cached_data/drug_names.js', 'utf8')));
+                application_cache.set(cache_key, JSON.parse(fs.readFileSync('/cached_data/drug_names.js', 'utf8')));
             } else {
                 common.send_http_request(common.hosts.nlm, '/dailymed/services/v2/drugnames.json?page=' + page, common.http_methods.get, get_medicine_list_complete, null);
             }
@@ -47,7 +47,7 @@ function get_medicine_list_complete(response, success) {
                 }
             }
         });
-        if (response && response.metadata.current_page && response.metadata.total_pages && response.metadata.current_page == 2 /* response.metadata.total_pages*/ ) {
+        if (response && response.metadata.current_page && response.metadata.total_pages && response.metadata.current_page == response.metadata.total_pages ) {
             application_cache.set(cache_key, drug_names);
             cache_drug_names_complete();
         } else if (response) {
@@ -68,7 +68,6 @@ function cache_drug_names_complete() {
                     if (err) {
                         return console.log(err);
                     }
-                    console.log("Drug names cached successfully.");
                 });
         });
     } catch (ex) {}
