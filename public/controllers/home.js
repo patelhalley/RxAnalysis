@@ -6,7 +6,7 @@ angular.module('PrimaryModule').controller('HomeController', ['$scope', '$timeou
 	$scope.getDrugs = function (val) {
 		return $http.get('/drugs', {
 			params: {
-				searchTerm: val
+				search_term: val
 			}
 		}).then(function (response) {
 			return _.each(response.data, function (item) {
