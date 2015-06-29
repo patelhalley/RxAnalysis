@@ -2,11 +2,17 @@ var http = require('http');
 
 module.exports = {
 	send_http_request: function (host, path, method, success_callback, success_parameter) {
+
+		if (host == 'api.fda.gov') {
+			path += '&api_key=' + api_keys.fda;
+		}
 		var options = {
 			host: host,
 			path: path,
 			method: method
 		};
+
+
 		var req = http.request(options, function (res) {
 			var buffer = "",
 				data;
@@ -29,5 +35,12 @@ module.exports = {
 	http_methods: {
 		get: 'GET',
 		post: 'POST'
+	},
+	api_keys: {
+		fda: 'tAQVDFjqXCz7ghs2biffg6ZMkULC416zm2ufSJfL'
 	}
+};
+
+var api_keys = {
+	fda: 'tAQVDFjqXCz7ghs2biffg6ZMkULC416zm2ufSJfL'
 };

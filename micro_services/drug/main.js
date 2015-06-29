@@ -5,10 +5,6 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 
 
-
-
-
-
 /* Helper fields/functions*/
 var application_cache = {};
 var cache_key = "drug_names";
@@ -17,9 +13,8 @@ var drug_names = [];
 
 function get_medicine_list(page) {
 	var cachedData = application_cache.get(cache_key);
-
+	
 	if (cachedData) {
-
 		return;
 	} else {
 		fs.exists('/cached_data/drug_names.js', function (exists) {
@@ -48,7 +43,8 @@ function get_medicine_list_complete(response, success) {
 				}
 			}
 		});
-		if (response && response.metadata.current_page && response.metadata.total_pages && response.metadata.current_page == 50 /* response.metadata.total_pages */ ) {
+		//Since this is pilot just caching first 100 Pages of data.
+		if (response && response.metadata.current_page && response.metadata.total_pages && response.metadata.current_page == 100 /* response.metadata.total_pages */ ) {
 			application_cache.set(cache_key, drug_names);
 			cache_drug_names_complete();
 		} else if (response) {
@@ -84,5 +80,4 @@ module.exports = {
 	cache_keys: {
 		drug_names: cache_key
 	}
-
 }
