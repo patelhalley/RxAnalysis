@@ -23,7 +23,6 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 		if ($scope.showEnforcementStatistics && !$scope.enforcementChartLoaded) {
 			$http.get('/drug/enforcement/count?drug_name=' + $scope.drug_name).success(function (data) {
 				$scope.pastEnforcementSuccess(data);
-				if (data.length > 0) $scope.showEnforcementStatistics = false;
 			});
 
 			$http.get('/drug/enforcement/classification_count?drug_name=' + $scope.drug_name).success(function (data) {
@@ -45,7 +44,6 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 		if ($scope.showEventStatistics && !$scope.eventChartLoaded) {
 			$http.get('/drug/event/count?drug_name=' + $scope.drug_name).success(function (data) {
 				$scope.pastEventSuccess(data);
-				if (data.length > 0) $scope.showEventStatistics = false;
 			});
 		}
 		$scope.eventChartLoaded = true;

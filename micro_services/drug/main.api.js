@@ -12,7 +12,7 @@ module.exports = function (app, application_cache) {
         if (cached_data && request.query.search_term) {
             var return_data = _und.first(_und.filter(cached_data, function (item) {
                 if (item && item.length > 0 && request.query.search_term) {
-                    return item.toLowerCase().indexOf(request.query.search_term.toLowerCase()) > -1;
+                    return item.toLowerCase().indexOf(request.query.search_term.toLowerCase()) == 0;
                 } else {
                     return false;
                 }
