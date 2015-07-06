@@ -1,11 +1,29 @@
-angular.module('PrimaryModule', ['ui.bootstrap']);
+var app = angular.module('PrimaryModule', ['ui.bootstrap', 'ngSanitize']);
+app.config(function ($provide) {
+	$provide.decorator("$sanitize", function ($delegate, $log) {
+		return function (text, target) {
+			var result = $delegate(text, target);
+			return result;
+		};
+	});
+});
 
 angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$timeout', '$http', function ($scope, $timeout, $http) {
 	$scope.drug_name = getParameterByName('drug_name');
+	$scope.states = [];
+	$scope.state = 'Nationwide';
+	$.cookie('dp', getParameterByName('dp'));
+	$scope.distributionPattern = $.cookie('dp');
+
+	if ($scope.distributionPattern == null || $scope.distributionPattern == '') {
+		$scope.distributionPattern = 'Nationwide';
+	}
+
+
 	$scope.drugDetail = {
 
 	};
-
+	$scope.labelLoading = true;
 	$scope.eventChartElement = {};
 	$scope.statusChartElement = {};
 	$scope.classificationChartElement = {};
@@ -17,19 +35,21 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 	$scope.enforcementChart = getBaseLineChart(1, ["#414DF2"], ["Enforcements"]);
 
 	$scope.showEnforcementStatistics = false;
+	$scope.enforcementChartDataAvalability = true;
+
 	$scope.enforcementChartLoaded = false;
 	$scope.toggleEnforcementStatistics = function () {
 		$scope.showEnforcementStatistics = !$scope.showEnforcementStatistics;
 		if ($scope.showEnforcementStatistics && !$scope.enforcementChartLoaded) {
-			$http.get('/drug/enforcement/count?drug_name=' + $scope.drug_name).success(function (data) {
+			$http.get('/drug/enforcement/count?drug_name=' + $scope.drug_name + '&dp=' + $scope.distributionPattern).success(function (data) {
 				$scope.pastEnforcementSuccess(data);
 			});
 
-			$http.get('/drug/enforcement/classification_count?drug_name=' + $scope.drug_name).success(function (data) {
+			$http.get('/drug/enforcement/classification_count?drug_name=' + $scope.drug_name + '&dp=' + $scope.distributionPattern).success(function (data) {
 				$scope.pastEnforcementClassificationSuccess(data);
 			});
 
-			$http.get('/drug/enforcement/status_count?drug_name=' + $scope.drug_name).success(function (data) {
+			$http.get('/drug/enforcement/status_count?drug_name=' + $scope.drug_name + '&dp=' + $scope.distributionPattern).success(function (data) {
 				$scope.pastEnforcementStatusSuccess(data);
 			});
 		}
@@ -37,6 +57,7 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 	}
 
 	$scope.showEventStatistics = false;
+	$scope.eventChartDataAvalability = true;
 	$scope.eventChartLoaded = false;
 	$scope.toggleEventStatistics = function () {
 		$scope.showEventStatistics = !$scope.showEventStatistics;
@@ -51,7 +72,17 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 
 	$http.get('/drug/label?drug_name=' + $scope.drug_name).success(function (data) {
 		if (data) {
+			$scope.labelLoading = false;
 			$scope.drugDetail = data;
+		}
+	});
+
+	$http.get('/states').success(function (data) {
+		if (data) {
+			_.each(data, function (state) {
+				state.link = '/details?drug_name=' + $scope.drug_name + '&dp=' + state.abbreviation;
+			});
+			$scope.states = data;
 		}
 	});
 
@@ -76,7 +107,9 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 
 	$scope.pastEnforcementClassificationSuccess = function (data) {
 		if (data) {
-
+			$scope.classificationChart.data[0].label = 'Class I';
+			$scope.classificationChart.data[1].label = 'Class II';
+			$scope.classificationChart.data[2].label = 'Class III';
 
 			var classII = _.filter(data, function (r) {
 				return r.term.toLowerCase() == 'ii';
@@ -84,7 +117,6 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 
 			if (classII && classII.length > 0) {
 				$scope.classificationChart.data[1].value = classII[0].count;
-				$scope.classificationChart.data[1].label = 'Class III';
 			}
 
 			var classIII = _.filter(data, function (r) {
@@ -93,7 +125,6 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 
 			if (classIII && classIII.length > 0) {
 				$scope.classificationChart.data[2].value = classIII[0].count;
-				$scope.classificationChart.data[2].label = 'Class II';
 			}
 
 			var classI = _.filter(data, function (r) {
@@ -102,7 +133,6 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 
 			if (classI && classI.length > 0) {
 				$scope.classificationChart.data[0].value = classI[0].count - ($scope.classificationChart.data[2].value + $scope.classificationChart.data[1].value);
-				$scope.classificationChart.data[0].label = 'Class I';
 			}
 
 			var classificationChartCanvas = document.getElementById('classificationChart').getContext('2d');
@@ -147,6 +177,11 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 				$scope.enforcementChart.datasets[0].data.push(item.value);
 			});
 
+			if (data.length == 0) {
+				$scope.enforcementChartDataAvalability = false;
+			} else {
+				$scope.enforcementChartDataAvalability = true;
+			}
 		}
 		var enforcementChartCanvas = document.getElementById('enforcementChart').getContext('2d');
 		$scope.enforcementChartElement = new Chart(enforcementChartCanvas).Line($scope.enforcementChart, $scope.enforcementChart.options);
@@ -164,12 +199,18 @@ angular.module('PrimaryModule').controller('DetailsController', ['$scope', '$tim
 				$scope.eventChart.datasets[0].data.push(item.value);
 			});
 
+			if (data.length == 0) {
+				$scope.eventChartDataAvalability = false;
+			} else {
+				$scope.eventChartDataAvalability = true;
+			}
 		}
 		var eventChartCanvas = document.getElementById('eventChart').getContext('2d');
 		$scope.eventChart = new Chart(eventChartCanvas).Line($scope.eventChart, $scope.eventChart.options);
 
 		document.getElementById('eventChart-legend').innerHTML = $scope.eventChart.generateLegend();
 	};
+
 }]);
 
 function getParameterByName(name) {

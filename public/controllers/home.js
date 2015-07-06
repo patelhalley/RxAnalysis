@@ -3,6 +3,13 @@ angular.module('PrimaryModule', ['ui.bootstrap']);
 angular.module('PrimaryModule').controller('HomeController', ['$scope', '$timeout', '$http', function ($scope, $timeout, $http) {
 
 	$scope.selectedDrug = '';
+	$scope.distributionPattern = $.cookie('dp');
+	
+	if($scope.distributionPattern == null){
+		$scope.distributionPattern = 'Nationwide';
+	}
+	
+	
 	$scope.getDrugs = function (val) {
 		return $http.get('/drugs', {
 			params: {

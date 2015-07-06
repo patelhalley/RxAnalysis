@@ -3127,8 +3127,8 @@ fieldset[disabled] .btn-default.active {
 }
 .btn-primary {
   color: #ffffff;
-  background-color: #2c3e50;
-  border-color: #2c3e50;
+  background-color: #3399CC;
+  border-color: #3399CC;
 }
 .btn-primary:focus,
 .btn-primary.focus {
@@ -5128,9 +5128,9 @@ a.thumbnail.active {
   color: #e6e6e6;
 }
 .alert-warning {
-  background-color: #f39c12;
+  background-color: #fcf8e3;
   border-color: #f39c12;
-  color: #ffffff;
+  color: #333;
 }
 .alert-warning hr {
   border-top-color: #e08e0b;

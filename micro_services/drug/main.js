@@ -13,13 +13,14 @@ var drug_names = [];
 
 function get_medicine_list(page) {
 	var cachedData = application_cache.get(cache_key);
-	
+
 	if (cachedData) {
 		return;
 	} else {
-		fs.exists('/cached_data/drug_names.js', function (exists) {
+		fs.exists(__dirname + '/drug_names.js', function (exists) {
 			if (exists) {
-				application_cache.set(cache_key, JSON.parse(fs.readFileSync('/cached_data/drug_names.js', 'utf8')));
+				cachedData = JSON.parse(fs.readFileSync(__dirname + '/drug_names.js', 'utf8'));
+				application_cache.set(cache_key, cachedData);
 			} else {
 				common.send_http_request(common.hosts.nlm, '/dailymed/services/v2/drugnames.json?page=' + page, common.http_methods.get, get_medicine_list_complete, null);
 			}
@@ -43,8 +44,7 @@ function get_medicine_list_complete(response, success) {
 				}
 			}
 		});
-		//Since this is pilot just caching first 100 Pages of data.
-		if (response && response.metadata.current_page && response.metadata.total_pages && response.metadata.current_page == 100 /* response.metadata.total_pages */ ) {
+		if (response && response.metadata.current_page && response.metadata.total_pages && response.metadata.current_page == response.metadata.total_pages) {
 			application_cache.set(cache_key, drug_names);
 			cache_drug_names_complete();
 		} else if (response) {
@@ -55,18 +55,12 @@ function get_medicine_list_complete(response, success) {
 
 function cache_drug_names_complete() {
 	try {
-		mkdirp('/cached_data', function (err) {
-			if (err) {
-				console.log('Directory Error');
-				return console.log(err);
-			}
-			fs.writeFile("/cached_data/drug_names.js", JSON.stringify(drug_names),
-				function (err) {
-					if (err) {
-						return console.log(err);
-					}
-				});
-		});
+		fs.writeFile(__dirname + "/drug_names.js", JSON.stringify(drug_names),
+			function (err) {
+				if (err) {
+					return console.log(err);
+				}
+			});
 	} catch (ex) {}
 	console.log("Drug names cached successfully.");
 }
@@ -76,6 +70,14 @@ module.exports = {
 	cache_drug_names: function (cache) {
 		application_cache = cache;
 		get_medicine_list(1);
+	},
+	cache_drug_names_from_file: function () {
+		fs.exists(__dirname + '/drug_names.js', function (exists) {
+			if (exists) {
+				cachedData = JSON.parse(fs.readFileSync(__dirname + '/drug_names.js', 'utf8'));
+				application_cache.set(cache_key, cachedData);
+			}
+		});
 	},
 	cache_keys: {
 		drug_names: cache_key

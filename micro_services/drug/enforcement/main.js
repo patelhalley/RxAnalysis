@@ -10,13 +10,19 @@ module.exports = function (app) {
 		if (request.query.drug_name) {
 			var today = new Date();
 			var searchTerms = request.query.drug_name.split(" ");
-			var searchQueryString = 'search=recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
+
+			var distributionPatternSearchString = '';
+			if (request.query.dp.toUpperCase() == 'NATIONWIDE') {
+				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+';
+			}
+			var searchQueryString = 'search=' + distributionPatternSearchString + 'recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
 			for (var i = 0; i < searchTerms.length; i++) {
 				searchQueryString += searchTerms[i];
 				if (i < searchTerms.length - 1) {
 					searchQueryString += "+AND+";
 				}
 			}
+
 			common.send_http_request(common.hosts.fda, '/drug/enforcement.json?count=recall_initiation_date&limit=1000&' + searchQueryString, common.http_methods.get, get_count_complete, response);
 		}
 	});
@@ -25,7 +31,7 @@ module.exports = function (app) {
 		if (request.query.drug_name) {
 			var today = new Date();
 			var searchTerms = request.query.drug_name.split(" ");
-			var searchQueryString = 'search=recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
+			var searchQueryString = 'search=(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
 			for (var i = 0; i < searchTerms.length; i++) {
 				searchQueryString += searchTerms[i];
 				if (i < searchTerms.length - 1) {
@@ -40,7 +46,7 @@ module.exports = function (app) {
 		if (request.query.drug_name) {
 			var today = new Date();
 			var searchTerms = request.query.drug_name.split(" ");
-			var searchQueryString = 'search=recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
+			var searchQueryString = 'search=(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
 			for (var i = 0; i < searchTerms.length; i++) {
 				searchQueryString += searchTerms[i];
 				if (i < searchTerms.length - 1) {

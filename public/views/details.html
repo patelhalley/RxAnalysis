@@ -2,253 +2,269 @@
 <html ng-app="PrimaryModule">
 
 <head>
-    <link href="../css/bootstrap.css" rel="stylesheet">
-    <link href="../css/angular-chart.css" rel="stylesheet">
-    <link href="../css/style.css" rel="stylesheet">
+	<link href="../css/bootstrap.css" rel="stylesheet">
+	<link href="../css/angular-chart.css" rel="stylesheet">
+	<link href="../css/style.css" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+	<!--
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    -->
 
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js" type="application/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" type="application/javascript"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js" charset="utf-8"></script>
-    <!--	<script type="application/javascript" src="/js/typeahead.bundle.js"></script>-->
-    <script type="application/javascript" src="../controllers/details.js"></script>
-    <script>
-        function printContent(el) {
-            var restorepage = document.body.innerHTML;
-            var printcontent = document.getElementById(el).innerHTML;
-            document.body.innerHTML = printcontent;
-            window.print();
-            document.body.innerHTML = restorepage;
-        }
-    </script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-sanitize.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../controllers/details.js"></script>
 </head>
 
 <body ng-controller="DetailsController">
 
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header page-scroll">
-                <a class="navbar-brand" href="/">
-                    <img src="/img/logo.png" class="logo">
-                </a>
-            </div>
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
 
-            <form class="navbar-form navbar-left" action="/details" method="get">
-                <input type="hidden" name="drug_name" ng-value="selectedDrug" />
-                <div class="row" style="color:#000;margin-top:5px">
-                    <div class="col-xs-12">
-                        <div class="input-group">
-                            <input type="text" ng-model="selectedDrug" placeholder="Drug Name" typeahead="drug for drug in getDrugs($viewValue)" required typeahead-loading="loadingDrugs" class="form-control input-sm typeahead" />
-                            <span class="input-group-btn"> <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>  </span>
+			<button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header page-scroll">
+				<a class="navbar-brand" href="/">
+					<img src="/img/logo.png" class="logo">
+				</a>
+			</div>
+			<nav class="navbar-collapse collapse" role="navigation" id="navbar-collapse">
+				<ul class="nav navbar-right navbar-nav navbar-default">
+					<li><a data-toggle="modal" data-target="#helpDialog" href="#"><i class="fa fa-question-circle"></i>&nbsp;&nbsp;Glossary</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
+
+	<div class="container">
+		<div class="content ">
+			<div class="alert alert-warning" role="alert"><i class="fa fa-warning"></i>&nbsp;&nbsp; RxAnalysis is a beta research project powered by OPENFDA. While we make every effort to ensure that data is accurate, you should assume all results are unvalidated.</div>
+			<div class="row">
+				<div class="col-xs-12 col-sm-6">
+					<form action="/details" method="get">
+						<input type="hidden" name="drug_name" ng-value="selectedDrug" />
+						<input type="hidden" name="dp" ng-value="distributionPattern" />
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="input-group">
+									<input type="text" ng-model="selectedDrug" placeholder="Drug Name" typeahead="drug for drug in getDrugs($viewValue)" required typeahead-loading="loadingDrugs" class="form-control input-sm typeahead" />
+									<span class="input-group-btn"> <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>  </span>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="col-xs-12 col-sm-6 ">
+					<div class="pull-right">
+						Displaying data filtered for:
+						<div class="btn-group" dropdown>
+							<button type="button" class="btn btn-primary btn-sm">{{distributionPattern}}</button>
+							<button type="button" class="btn btn-primary dropdown-toggle btn-sm" dropdown-toggle>
+								<span class="caret"></span>
+								<span class="sr-only">Split button!</span>
+							</button>
+							<ul class="dropdown-menu scrollable-menu" role="menu">
+								<li ng-repeat="state in states">
+									<a ng-href="{{state.link}}">{{state.abbreviation}}</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="enforcement">
+				<div class="row" ng-click="toggleEnforcementStatistics()">
+					<i class="fa fa-warning"></i>&nbsp;&nbsp;{{drug_name | uppercase}} may have <b>Enforcement/Recall Events</b> that occurred in past.
+					<i class="fa fa-plus-circle pull-right" ng-hide="showEnforcementStatistics"></i>
+					<i class="fa fa-minus-circle pull-right" ng-show="showEnforcementStatistics"></i>
+				</div>
+			</div>
+			<div class="row" ng-show="showEnforcementStatistics" style="background-color:#FFF;color:#666">
+				<div ng-show="enforcementChartDataAvalability">
+					<div class="col-xs-12 col-md-4 col-lg-4">
+						<h4>Enforcements</h4>
+						<hr>
+						<canvas id="enforcementChart"></canvas>
+						<div id="enforcementChart-legend" class="chart-legend"></div>
+					</div>
+
+					<div class="col-xs-12 col-md-4 col-lg-4">
+						<h4>Enforcement Classification</h4>
+						<hr>
+						<canvas id="classificationChart"></canvas>
+						<div id="classificationChart-legend" class="chart-legend"></div>
+					</div>
+					<div class="col-xs-12 col-md-4 col-lg-4">
+						<h4>Enforcement Status</h4>
+						<hr>
+						<canvas id="statusChart"></canvas>
+						<div id="statusChart-legend" class="chart-legend"></div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-xs-offset-4" ng-hide="enforcementChartDataAvalability">No Enforcement/Recall data available.</div>
+			</div>
+			<div class="event">
+				<div class="row" ng-click="toggleEventStatistics()">
+					<i class="fa fa-warning"></i>&nbsp;&nbsp;{{drug_name | uppercase}} may have <b>Adverse Events</b> that occurred in past.
+					<i class="fa fa-plus-circle pull-right" ng-hide="showEventStatistics"></i>
+					<i class="fa fa-minus-circle pull-right" ng-show="showEventStatistics"></i>
+				</div>
+
+			</div>
+			<div class="row" ng-show="showEventStatistics" style="background-color:#FFF;color:#666">
+				<div ng-show="eventChartDataAvalability">
+					<div class="col-xs-12 col-md-4 col-lg-4">
+						<h4>Adverse Events</h4>
+						<hr>
+						<div class="col-xs-12 col-md-12 col-lg-12">
+							<canvas id="eventChart"></canvas>
+							<div id="eventChart-legend" class="chart-legend"></div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-xs-offset-4" ng-hide="eventChartDataAvalability">No Events data available.</div>
+			</div>
+
+
+
+
+			<div class="row labelSection">
+				<div class="col-sm-12">
+					<h2>
+                        {{drug_name | uppercase}}</h3>
+                        <hr>
+                        <div ng-if="!drugDetail.length" class="row">
+                            <div class="col-md-offset-5">
+                                <img class="loading" src="/img/ajaxSpinner.gif" ng-show="labelLoading" />
+                            </div>
                         </div>
-                    </div>
+                        <div ng-repeat="field in drugDetail track by $index" class="row">
+                            <div class="col-xs-12">
+
+                                <div ng-if="field.isHTML" class="hidden-xs">
+                                    <div class="labelSubheader">{{field.title}}</div>
+                                    <div ng-repeat="item in field.content track by $index">
+                                        <p ng-bind-html="item"></p>
+                                    </div>
+                                </div>
+                                <div ng-if="!field.isHTML">
+                                    <div class="labelSubheader">{{field.title}}</div>
+                                    <div ng-if="field.isArray">
+                                        <div ng-repeat="item in field.content">
+                                            {{item}}
+                                        </div>
+                                    </div>
+                                    <div ng-if="!field.isArray">
+                                        {{field.content}}
+                                    </div>
+                                </div>
+
+                                <hr>
+                            </div>
+                        </div>
                 </div>
-
-            </form>
-
+            </div>
         </div>
-        <!-- /.container-fluid -->
-    </nav>
+    </div>
+    <footer class="text-center">
+        <div class="footer-above">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="footer-col col-md-6 left-footer ">
+                        <h3>Corporate Headquarters</h3>
+                        <p>
+                            1760 Old Meadow Road
+                            <br />McLean, Virginia 22102
+                            <br /><i class="fa fa-phone"></i>&nbsp;&nbsp;703-748-7000
+                        </p>
+                    </div>
 
-    <div class="container">
-        <div class="content ">
-            <div class="enforcement">
-                <div class="row" ng-click="toggleEnforcementStatistics()">
-                    <i class="fa fa-warning"></i>&nbsp;&nbsp;{{drug_name | uppercase}} may have <b>Enforcement/Recall Events</b> that occurred in past.
-                    <i class="fa fa-plus-circle pull-right" ng-hide="showEnforcementStatistics"></i>
-                    <i class="fa fa-minus-circle pull-right" ng-show="showEnforcementStatistics"></i>
-                </div>
-            </div>
-            <div class="row" ng-show="showEnforcementStatistics" style="background-color:#FFF;color:#666">
-                <div class="col-xs-12 col-md-4 col-lg-4">
-                    <h4>Enforcements</h4>
-                    <hr>
-                    <canvas id="enforcementChart" style="padding:10px;min-height:200px;max-height:200px"></canvas>
-                    <div id="enforcementChart-legend" class="chart-legend"></div>
-                </div>
-
-                <div class="col-xs-12 col-md-4 col-lg-4">
-                    <h4>Enforcement Classification</h4>
-                    <hr>
-                    <canvas id="classificationChart" style="padding:10px;"></canvas>
-                    <div id="classificationChart-legend" class="chart-legend"></div>
-                </div>
-                <div class="col-xs-12 col-md-4 col-lg-4">
-                    <h4>Enforcement Status</h4>
-                    <hr>
-                    <canvas id="statusChart" style="padding:10px;"></canvas>
-                    <div id="statusChart-legend" class="chart-legend"></div>
-                </div>
-
-            </div>
-            <div class="event">
-                <div class="row" ng-click="toggleEventStatistics()">
-                    <i class="fa fa-warning"></i>&nbsp;&nbsp;{{drug_name | uppercase}} may have <b>Adverse Events</b> that occurred in past.
-                    <i class="fa fa-plus-circle pull-right" ng-hide="showEventStatistics"></i>
-                    <i class="fa fa-minus-circle pull-right" ng-show="showEventStatistics"></i>
-                </div>
-
-            </div>
-            <div class="row" ng-show="showEventStatistics" style="background-color:#FFF;color:#666">
-
-                <div class="col-xs-12 col-md-4 col-lg-4">
-                    <h4>Adverse Events</h4>
-                    <hr>
-                    <div class="col-xs-12 col-md-12 col-lg-12">
-                        <canvas id="eventChart" style="padding:10px;min-height:275px;max-height:275px"></canvas>
-                        <div id="eventChart-legend" class="chart-legend"></div>
+                    <div class="footer-col col-md-6">
+                        <h3>About PPC</h3>
+                        <p>
+                            <a href="http://www.ppc.com" target="_blank">PPC</a>&nbsp;&nbsp;is a leading Information Technology and Management Consulting firm,
+                            <br>delivering solutions to Federal, State and Local Government and commercial industry.
+                        </p>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Copyright © PPC - Project Performance Company 2015
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
+    <div id="helpDialog" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
-
-
-            <div class="row labelSection">
-                <div class="col-sm-12">
-                    <h2>{{drug_name | uppercase}}</h3>
-				<hr>
-
-				<!--						<span class="pull-right" style="margin-top:-5px"><button class="btn btn-success btn-sm" style="line-height:1" onclick="printContent('labelContent');"><i class="fa fa-print"></i> Print</button></span>-->
-				<div ng-if="!drugDetail.description" class="row">
-					<div class="col-md-offset-4">
-						No Label information found.
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.description">
-					<div class="col-xs-12">
-						<div ng-repeat="item in drugDetail.description" >
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.information_for_patients">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Information for Patients</div>
-						<div ng-repeat="item in drugDetail.information_for_patients">
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.indications_and_usage">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Indications and Usage</div>
-						<div ng-repeat="item in drugDetail.indications_and_usage">
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.dosage_and_administration">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Dosage and Administration</div>
-						<div ng-repeat="item in drugDetail.dosage_and_administration">
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.adverse_reactions">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Adverse Reactions</div>
-						<div ng-repeat="item in drugDetail.adverse_reactions">
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.drug_interactions">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Drug Interactions</div>
-						<div ng-repeat="item in drugDetail.drug_interactions">
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.nursing_mothers">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Nursing Mothers</div>
-						<div ng-repeat="item in drugDetail.nursing_mothers">
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.pediatric_use">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Pediatric Use</div>
-						<div ng-repeat="item in drugDetail.pediatric_use">
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.clinical_studies">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Clinical Studies</div>
-						<div ng-repeat="item in drugDetail.clinical_studies">
-							{{item}}
-						</div>
-						<hr>
-					</div>
-				</div>
-				<div class="row" ng-if="drugDetail.clinical_pharmacology">
-					<div class="col-xs-12">
-						<div class="labelSubheader">Clinical Pharmacology</div>
-						<div ng-repeat="item in drugDetail.clinical_pharmacology">
-							{{item}}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	
-
-
-
-	</div>
-	</div>
-	<footer class="text-center">
-		<div class="footer-above">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="footer-col col-md-6 left-footer ">
-						<h3>Location</h3>
-						<p>1760 Old Meadow Road
-							<br/>McLean, Virginia 22102</p>
-					</div>
-
-					<div class="footer-col col-md-6">
-						<h3>About PPC</h3>
-						<p> <a href="http://www.ppc.com" target="_blank">PPC</a>&nbsp;&nbsp;is a leading Information Technology and Management Consulting firm,
-							<br>delivering solutions to Federal, State and Local Government and commercial industry.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="footer-below">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-12">
-						Copyright © PPC - Project Performance Company 2015
-					</div>
-				</div>
-			</div>
-		</div>
-	</footer>
-
-
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Glossary</h4>
+                </div>
+                <div class="modal-body">
+                    <h3>Enforcement Classification</h3>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-2"><b>Class I</b></div>
+                        <div class="col-xs-6 col-sm-10">Dangerous or defective products that predictably could cause serious health problems or death. Examples include: food found to contain botulinum toxin, food with undeclared allergens, a label mix-up on a lifesaving drug, or a defective artificial heart valve.</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-2"><b>Class II</b></div>
+                        <div class="col-xs-6 col-sm-10">Products that might cause a temporary health problem, or pose only a slight threat of a serious nature. Example: a drug that is under-strength but that is not used to treat life-threatening situations.</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-2"><b>Class III</b></div>
+                        <div class="col-xs-6 col-sm-10">Products that are unlikely to cause any adverse health reaction, but that violate FDA labeling or manufacturing laws. Examples include: a minor container defect and lack of English labeling in a retail food.</div>
+                    </div>
+					<hr>
+					<h3>Enforcement Status</h3>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-2"><b>On Going</b></div>
+                        <div class="col-xs-6 col-sm-10">A recall which is currently in progress.</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-2"><b>Completed</b></div>
+                        <div class="col-xs-6 col-sm-10">The recall action reaches the point at which the firm has actually retrieved and impounded all outstanding product that could reasonably be expected to be recovered, or has completed all product corrections.</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-2"><b>Terminated</b></div>
+                        <div class="col-xs-6 col-sm-10">FDA has determined that all reasonable efforts have been made to remove or correct the violative product in accordance with the recall strategy, and proper disposition has been made according to the degree of hazard.</div>
+                    </div>
+					 <div class="row">
+                        <div class="col-xs-6 col-sm-2"><b>Pending</b></div>
+                        <div class="col-xs-6 col-sm-10">Actions that have been determined to be recalls, but that remain in the process of being classified.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

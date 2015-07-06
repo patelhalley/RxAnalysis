@@ -29,18 +29,25 @@ module.exports = function (app) {
 /* Helper functions*/
 
 function enhanceContent(source, fieldName) {
+	
 	var searchMask = fieldName.replace(/_/g, ' ') + ' ';
 	var regEx = new RegExp(searchMask, "ig");
 	var replaceMask = "";
-	for (var i = 0; i < source.length; i++) {
-		source[i] = source[i].replace(regEx, replaceMask);
+	if (Object.prototype.toString.call(source) === '[object Array]') {
+		for (var i = 0; i < source.length; i++) {
+			source[i] = source[i].replace(regEx, replaceMask).replace(/^\s+|\s+$/g, '');
+		}
+	} else if (typeof source === 'string') {
+		source = source.replace(regEx, replaceMask).replace(/^\s+|\s+$/g, '');
+	} else {
+		source = source;
 	}
 	return source;
 }
 
 function getLabelComplete(data, parameter) {
 	parameter.response.setHeader('Content-Type', 'application/json');
-
+	var labelFields = [];
 	if (data && data.results && data.results.length > 0) {
 		var filteredLabel = [];
 		if (parameter && parameter.generalSearch == null) {
@@ -60,56 +67,17 @@ function getLabelComplete(data, parameter) {
 			if (fl.effective_time) {
 				fl.effective_date = utility.get_date(fl.effective_time);
 			}
-
-			if (fl.information_for_patients) {
-				fl.information_for_patients = enhanceContent(fl.information_for_patients, 'information_for_patients');
-			}
-
-			if (fl.how_supplied) {
-				fl.how_supplied = enhanceContent(fl.how_supplied, 'how_supplied');
-			}
-
-			if (fl.indications_and_usage) {
-				fl.indications_and_usage = enhanceContent(fl.indications_and_usage, 'indications_and_usage');
-			}
-
-			if (fl.dosage_and_administration) {
-				fl.dosage_and_administration = enhanceContent(fl.dosage_and_administration, 'dosage_and_administration');
-			}
-
-			if (fl.adverse_reactions) {
-				fl.adverse_reactions = enhanceContent(fl.adverse_reactions, 'adverse_reactions');
-			}
-
-			if (fl.drug_interactions) {
-				fl.drug_interactions = enhanceContent(fl.drug_interactions, 'drug_interactions');
-			}
-
-			if (fl.clinical_studies) {
-				fl.clinical_studies = enhanceContent(fl.clinical_studies, 'clinical_studies');
-			}
-
-			if (fl.nursing_mothers) {
-				fl.nursing_mothers = enhanceContent(fl.indications_and_usage, 'nursing_mothers');
-			}
-
-			if (fl.clinical_pharmacology) {
-				fl.clinical_pharmacology = enhanceContent(fl.clinical_pharmacology, 'clinical_pharmacology');
-			}
-
-			if (fl.pediatric_use) {
-				fl.pediatric_use = enhanceContent(fl.pediatric_use, 'pediatric_use');
-			}
-
-			if (fl.description) {
-				fl.description = enhanceContent(fl.description, 'description');
-			}
-
+			
 		});
-
-		parameter.response.send(JSON.stringify(_und.last(_und.sortBy(filteredLabel, function (fl) {
+		var labelContent = _und.last(_und.sortBy(filteredLabel, function (fl) {
 			return fl.effective_date;
-		}))));
+		}));
+
+		_und.each(Object.keys(labelContent), function (key) {
+			if (!(key == 'openfda' || key.indexOf(' id') >= 0 || key == 'id' || key == '@epoch' || key == 'version' || key == 'effective_time'))
+				labelFields.push(new field(key, labelContent[key]));
+		});
+		parameter.response.send(JSON.stringify(labelFields));
 		return;
 	} else if (parameter && parameter.generalSearch == null) {
 		var search_terms = parameter.drug_name.split(" ");
@@ -130,4 +98,20 @@ function getLabelComplete(data, parameter) {
 	}
 
 	parameter.response.send({});
+}
+
+function field(title, content) {
+	var self = this;
+	self.isHTML = false;
+	self.isArray = false;
+	self.title = title.replace(new RegExp('_', 'g'), ' ').toUpperCase();
+	self.content = enhanceContent(content, title);
+
+	if (Object.prototype.toString.call(self.content) === '[object Array]') {
+		self.isHTML = self.content[0].substring(0, 1) == '<';
+		self.isArray = true;
+	} else if (typeof self.content === 'string') {
+		self.isHTML = self.content.substring(0, 1) == '<';
+	} 
+	return self;
 }

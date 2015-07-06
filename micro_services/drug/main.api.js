@@ -23,7 +23,7 @@ module.exports = function (app, application_cache) {
                 response.send({});
             }
         } else {
-            main.cache_drug_names(application_cache);
+            main.cache_drug_names_from_file();
             response.send({});
         }
     });

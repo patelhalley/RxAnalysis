@@ -12,17 +12,26 @@ module.exports = {
 			method: method
 		};
 
-
 		var req = http.request(options, function (res) {
 			var buffer = "",
 				data;
 			res.on('data', function (chunk) {
-				buffer += chunk;
+				try {
+					buffer += chunk;
+				} catch (ex) {
+					console.log(ex);
+					success_callback({}, success_parameter);
+				}
 			});
 
 			res.on('end', function (chunk) {
-				data = JSON.parse(buffer);
-				success_callback(data, success_parameter);
+				try {
+					data = JSON.parse(buffer);
+					success_callback(data, success_parameter);
+				} catch (ex) {
+					console.log(ex);
+					success_callback({}, success_parameter);
+				}
 			});
 		});
 

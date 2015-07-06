@@ -28,6 +28,7 @@ require('./micro_services/drug/label/main')(app);
 require('./micro_services/drug/enforcement/main')(app);
 require('./micro_services/drug/event/main')(app);
 require('./micro_services/drug/main.api')(app, application_cache);
+require('./micro_services/state/main.api')(app);
 
 var main = require('./micro_services/drug/main');
 // Landing page / Home page
