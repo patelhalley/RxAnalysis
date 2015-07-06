@@ -12,7 +12,7 @@ module.exports = function (app) {
 			var searchTerms = request.query.drug_name.split(" ");
 
 			var distributionPatternSearchString = '';
-			if (request.query.dp.toUpperCase() == 'NATIONWIDE') {
+			if (request.query.dp.toUpperCase() != 'NATIONWIDE') {
 				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+';
 			}
 			var searchQueryString = 'search=' + distributionPatternSearchString + 'recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
@@ -31,7 +31,12 @@ module.exports = function (app) {
 		if (request.query.drug_name) {
 			var today = new Date();
 			var searchTerms = request.query.drug_name.split(" ");
-			var searchQueryString = 'search=(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
+			var distributionPatternSearchString = '';
+			if (request.query.dp.toUpperCase() != 'NATIONWIDE') {
+				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+';
+			}
+			
+			var searchQueryString = 'search=' + distributionPatternSearchString + 'recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
 			for (var i = 0; i < searchTerms.length; i++) {
 				searchQueryString += searchTerms[i];
 				if (i < searchTerms.length - 1) {
@@ -46,7 +51,12 @@ module.exports = function (app) {
 		if (request.query.drug_name) {
 			var today = new Date();
 			var searchTerms = request.query.drug_name.split(" ");
-			var searchQueryString = 'search=(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
+			var distributionPatternSearchString = '';
+			if (request.query.dp.toUpperCase() != 'NATIONWIDE') {
+				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+';
+			}
+			
+			var searchQueryString = 'search=' + distributionPatternSearchString + 'recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
 			for (var i = 0; i < searchTerms.length; i++) {
 				searchQueryString += searchTerms[i];
 				if (i < searchTerms.length - 1) {
