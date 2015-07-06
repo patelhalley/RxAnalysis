@@ -10,11 +10,14 @@ module.exports = function (app) {
 
 		if (request.query.drug_name) {
 			var searchTerms = request.query.drug_name.split(" ");
-			var searchQueryString = "search=";
+			var searchQueryString = 'search=openfda.brand_name:"';
 			for (var i = 0; i < searchTerms.length; i++) {
-				searchQueryString += "openfda.brand_name:" + searchTerms[i];
+				searchQueryString += searchTerms[i];
 				if (i < searchTerms.length - 1) {
-					searchQueryString += "+AND+";
+					searchQueryString += "+";
+				}
+				else {
+					searchQueryString += '"';
 				}
 			}
 
@@ -74,7 +77,7 @@ function getLabelComplete(data, parameter) {
 		}));
 
 		_und.each(Object.keys(labelContent), function (key) {
-			if (!(key == 'openfda' || key.indexOf(' id') >= 0 || key == 'id' || key == '@epoch' || key == 'version' || key == 'effective_time'))
+			if (!(key == 'openfda' || key == 0 || key == 'set_id' || key == '@epoch' || key == 'version' || key == 'effective_time'))
 				labelFields.push(new field(key, labelContent[key]));
 		});
 		parameter.response.send(JSON.stringify(labelFields));

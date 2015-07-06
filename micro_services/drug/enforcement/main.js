@@ -13,8 +13,19 @@ module.exports = function (app) {
 
 			var distributionPatternSearchString = '';
 			if (request.query.dp.toUpperCase() != 'NATIONWIDE') {
-				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+';
+				var fullStateName = utility.get_state_name(request.query.dp);
+				var fullStateNames = fullStateName.split(' ');
+				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:"';
+				for (var i = 0; i < fullStateNames.length; i++) {
+					distributionPatternSearchString += fullStateNames[i];
+					if (i < fullStateNames.length - 1) {
+						distributionPatternSearchString += "+";
+					} else {
+						distributionPatternSearchString += '")+AND+';
+					}
+				}
 			}
+			
 			var searchQueryString = 'search=' + distributionPatternSearchString + 'recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
 			for (var i = 0; i < searchTerms.length; i++) {
 				searchQueryString += searchTerms[i];
@@ -33,9 +44,19 @@ module.exports = function (app) {
 			var searchTerms = request.query.drug_name.split(" ");
 			var distributionPatternSearchString = '';
 			if (request.query.dp.toUpperCase() != 'NATIONWIDE') {
-				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+';
+				var fullStateName = utility.get_state_name(request.query.dp);
+				var fullStateNames = fullStateName.split(' ');
+				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:"';
+				for (var i = 0; i < fullStateNames.length; i++) {
+					distributionPatternSearchString += fullStateNames[i];
+					if (i < fullStateNames.length - 1) {
+						distributionPatternSearchString += "+";
+					} else {
+						distributionPatternSearchString += '")+AND+';
+					}
+				}
 			}
-			
+
 			var searchQueryString = 'search=' + distributionPatternSearchString + 'recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
 			for (var i = 0; i < searchTerms.length; i++) {
 				searchQueryString += searchTerms[i];
@@ -53,9 +74,19 @@ module.exports = function (app) {
 			var searchTerms = request.query.drug_name.split(" ");
 			var distributionPatternSearchString = '';
 			if (request.query.dp.toUpperCase() != 'NATIONWIDE') {
-				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:' + utility.get_state_name(request.query.dp) + ')+AND+';
+				var fullStateName = utility.get_state_name(request.query.dp);
+				var fullStateNames = fullStateName.split(' ');
+				distributionPatternSearchString = '(distribution_pattern:' + request.query.dp + '+OR+distribution_pattern:"';
+				for (var i = 0; i < fullStateNames.length; i++) {
+					distributionPatternSearchString += fullStateNames[i];
+					if (i < fullStateNames.length - 1) {
+						distributionPatternSearchString += "+";
+					} else {
+						distributionPatternSearchString += '")+AND+';
+					}
+				}
 			}
-			
+
 			var searchQueryString = 'search=' + distributionPatternSearchString + 'recall_initiation_date:[20120101+TO+' + today.getFullYear() + utility.get_two_digit_number(today.getMonth()) + utility.get_two_digit_number(today.getDate()) + ']+AND+';
 			for (var i = 0; i < searchTerms.length; i++) {
 				searchQueryString += searchTerms[i];

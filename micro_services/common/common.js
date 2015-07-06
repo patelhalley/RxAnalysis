@@ -12,6 +12,7 @@ module.exports = {
 			method: method
 		};
 
+		console.log(host + path);
 		var req = http.request(options, function (res) {
 			var buffer = "",
 				data;
