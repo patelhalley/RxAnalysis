@@ -76,7 +76,7 @@ Node 0.12.*
 All the dependencies are managed with the package manager tool [npm](https://www.npmjs.com) in the parent directory's [package.json](https://github.com/patelhalley/RxAnalysis/blob/master/package.json).
 
 ####Testing
-Unit test for site can performed using [Mocha](http://mochajs.org/).
+Unit test for site can be performed using [Mocha](http://mochajs.org/).
 
 To install Mocha execute following command at the root directory of the site
 ```
