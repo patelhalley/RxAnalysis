@@ -4,7 +4,10 @@ module.exports = {
 	send_http_request: function (host, path, method, success_callback, success_parameter) {
 
 		if (host == 'api.fda.gov') {
-			path += '&api_key=' + api_keys.fda;
+			if(path.indexOf('?') > 0)
+				path += '&api_key=' + api_keys.fda;
+			else 
+				path += '?api_key=' + api_keys.fda;
 		}
 		var options = {
 			host: host,
@@ -12,7 +15,6 @@ module.exports = {
 			method: method
 		};
 
-		console.log(host + path);
 		var req = http.request(options, function (res) {
 			var buffer = "",
 				data;

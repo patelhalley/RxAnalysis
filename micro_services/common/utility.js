@@ -3,6 +3,8 @@ var _und = require("underscore");
 module.exports = {
 
 	get_full_month: function (mon) {
+		if (mon > 11 || mon < 0) return null;
+
 		var month = new Array();
 		month[0] = "January";
 		month[1] = "February";
@@ -19,11 +21,17 @@ module.exports = {
 		return month[mon];
 	},
 	get_two_digit_number: function (num) {
+		if (!(typeof num === 'number')) return null;
+		if (num < 0) return null;
+		if (num > 99) return null;
+
 		var result = num.toString();
 		if (result.length == 2) return result;
 		else return '0' + result;
 	},
 	get_quarter: function (month) {
+		if (!(typeof month === 'number')) return null;
+		if (month > 11 || month < 0) return null;
 		var q = 'Q';
 		if (month < 3) q += "1";
 		else if (month < 6) q += "2";
@@ -32,16 +40,18 @@ module.exports = {
 		return q;
 	},
 	get_date: function (string_date) {
-		return new Date(Date.parse(string_date.substring(0, 4) + '-' + string_date.substring(4, 6) + '-' + string_date.substring(6)));
+		return new Date(Date.parse((Number(string_date.substring(0, 4))) + '-' + (Number(string_date.substring(4, 6))) + '-' + (Number(string_date.substring(6)))));
 	},
 	all_states: function () {
 		return states;
 	},
 	get_state_name: function (abbr) {
-		console.log('-----------------------Inside------------------------');
-		return _und.find(states, function (state) {
+		var state = _und.find(states, function (state) {
 			return state.abbreviation.toUpperCase() == abbr.toUpperCase();
-		}).name;
+		});
+
+		if (state) return state.name;
+		else return null;
 	}
 };
 
